@@ -1,6 +1,68 @@
 <template>
-  <div id="yhch">
-    <ContentMain main-title="交易统计"></ContentMain>
+  <div id="trade-static">
+    <ContentMain main-title="交易统计">
+      <template #header>
+        <div>
+          <form action id="trade-static-form">
+            <div class="row">
+              <SelectComponent class="col-sm-3" search-title="交易时间"></SelectComponent>
+              <SelectComponent class="col-sm-3" search-title="汇总维度"></SelectComponent>
+              <SelectComponent class="col-sm-3" search-title="交易币种"></SelectComponent>
+              <div class="col-sm-3 search">
+                <img
+                  :src="showStaticHigh ? src1 : src2"
+                  class="search-img"
+                  alt
+                  @click="showStaticHigh = !showStaticHigh"
+                />
+                <span @click="showStaticHigh = !showStaticHigh">高级查询</span>
+                <button class="search-button">
+                  <img src="../../assets/search.png" alt />
+                  <span>查询</span>
+                </button>
+              </div>
+            </div>
+            <div v-if="showStaticHigh" class="height-search">
+              <div class="row">
+                <SelectComponent class="col-sm-3" search-title="交易品牌"></SelectComponent>
+                <SelectComponent class="col-sm-3" level="acquirer" search-title="机构"></SelectComponent>
+                <SelectComponent class="col-sm-3" level="agent" search-title="集团"></SelectComponent>
+              </div>
+              <div class="row">
+                <SelectComponent class="col-sm-3" level="merchant" search-title="商户"></SelectComponent>
+                <SelectComponent class="col-sm-3" level="store" search-title="门店"></SelectComponent>
+              </div>
+            </div>
+          </form>
+        </div>
+      </template>
+      <template #table>
+        <el-table
+          :data="tradeStaticData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+          style="width: 100%"
+          class="table-width"
+        >
+          <el-table-column prop="intStoreCode" label="加盟店代码"></el-table-column>
+          <el-table-column prop="insName" label="加盟店名称"></el-table-column>
+          <el-table-column prop="totalTransNum" label="收款笔数"></el-table-column>
+          <el-table-column prop="totalTransAmt" label="收款金额"></el-table-column>
+          <el-table-column prop="totalRefundNum" label="退款笔数"></el-table-column>
+          <el-table-column prop="totalRefundAmt" label="退款金额"></el-table-column>
+          <el-table-column prop="totalNum" label="总计笔数"></el-table-column>
+          <el-table-column prop="totalAmt" label="总计金额"></el-table-column>
+        </el-table>
+        <!-- <div class="pagegination">
+          <el-pagination
+            background
+            @current-change="handleCurrentChange"
+            layout="prev, pager, next"
+            :current-page="currentPage"
+            :page-size="pageSize"
+            :total="total"
+          ></el-pagination>
+        </div> -->
+      </template>
+    </ContentMain>
     <!-- <h1>welcom</h1>
     <form action>
       <label>name</label>
@@ -57,16 +119,30 @@
     <div>
         <button v-for="tab in tabs" :key="tab" @click="currentTab = tab">{{ tab }}</button>
         <component v-bind:is="currentTabComponent"></component>
-    </div> -->
+    </div>-->
   </div>
 </template>
 <script>
 export default {
-  name: "yhch",
+  name: "static",
   data() {
     return {
+      tradeStaticData: [],
+      condition: {
+        aggregationDimension: "institution",
+        currency: "JPY",
+        endTime: "2019-11-02T00:00:00+08:00",
+        page: 1,
+        paymentBrand: "",
+        size: 20,
+        startTime: "2019-11-01T00:00:00+08:00",
+        utcOffset: 480
+      },
       username: "",
       password: "",
+      showStaticHigh: false,
+      src1: require("../../assets/icon_hidden.png"),
+      src2: require("../../assets/icon_show.png"),
       msg: "<button>1+1</button>",
       isDisabled: true,
       message: "test",
@@ -98,12 +174,12 @@ export default {
           value: "C"
         }
       ],
-      tabs:["HelloWorld","computed"],
+      tabs: ["HelloWorld", "computed"],
       currentTab: "HelloWorld"
     };
   },
   computed: {
-    currentTabComponent: function () {
+    currentTabComponent: function() {
       return this.currentTab;
     },
     resverString: function() {
@@ -123,7 +199,25 @@ export default {
       }
     }
   },
+  created() {
+    this.loadData();
+  },
   methods: {
+    loadData() {
+      this.tradeStaticList(this.condition);
+    },
+    tradeStaticList(condition) {
+      this.$api.trade
+        .tradeStaticList(condition)
+        .then(resp => {
+          this.tradeStaticData = resp.data.data;
+          this.total = resp.data.total;
+          console.log(this.tradeStaticData);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     submit(user) {
       alert(user);
     },
@@ -139,5 +233,44 @@ export default {
   }
 };
 </script>
-<style>
+<style lang="less" scoped>
+#trade-static {
+  #trade-static-form {
+    .row {
+      .col-sm-3 {
+        padding-right: 30px;
+        padding-left: 0;
+        color: rgba(141, 149, 153, 1);
+        font-size: 14px;
+        font-weight: 400px;
+      }
+      .search {
+        padding-top: 25px;
+        text-align: right;
+        padding-right: 0;
+        .search-img {
+          width: 15px;
+          height: 15px;
+        }
+        .search-button {
+          width: 100px;
+          height: 36px;
+          background-color: rgba(87, 155, 233, 1);
+          border-radius: 5px;
+          color: #fff;
+          border: 1px solid rgba(87, 155, 233, 1);
+          margin-left: 15px;
+          img {
+            width: 20px;
+          }
+        }
+      }
+    }
+    .height-search {
+      .row {
+        margin-top: 12px;
+      }
+    }
+  }
+}
 </style>

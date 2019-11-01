@@ -6,21 +6,22 @@
     <div class="col-sm-12">
       <form action id="loginForm">
         <div class="login-form-title">{{ msg.title }}</div>
-        <div class="row login-label-input">
+        <div class="row login-label-input" :class="{'error': $v.loginForm.username.$error}">
           <label for="username" name="username" class="col-sm-12 login-label">用户名</label>
           <input type="text" class="login-input" placeholder="请输入用户名" v-model="loginForm.username" />
         </div>
-        <div class="row login-label-input">
+        <div class="row login-label-input" :class="{'error': $v.loginForm.password.$error}">
           <label for="password" name="password" class="col-sm-12 login-label">密码</label>
           <input
             type="password"
             class="login-input"
             placeholder="请输入密码"
-            v-model="loginForm.password"
+            v-model.trim="loginForm.password"
+            @keyup.enter="submit(loginForm)"
           />
         </div>
         <div class="login-submit">
-          <button type="button" @click="submit">登录</button>
+          <button type="button" @click="submit(loginForm)">登录</button>
         </div>
       </form>
     </div>
@@ -28,7 +29,13 @@
 </template>
 
 <script>
+import Header from "../components/header.component";
+import { required, minLength, maxLength } from "vuelidate/lib/validators";
+import { JSEncrypt } from "jsencrypt";
 export default {
+  components: {
+    Header
+  },
   name: "login",
   data() {
     return {
@@ -41,6 +48,20 @@ export default {
       }
     };
   },
+  validations: {
+    loginForm: {
+      username: {
+        required,
+        minLength: minLength(2),
+        maxLength: maxLength(20)
+      },
+      password: {
+        required,
+        minLength: minLength(8),
+        maxLength: maxLength(32)
+      }
+    }
+  },
   created() {
     this.loadData();
   },
@@ -48,29 +69,56 @@ export default {
     loadData() {
       window.sessionStorage.removeItem("data");
     },
-    submit() {
+    submit(request) {
       if (this.loginForm.username === "" || this.loginForm.password === "") {
+        this.$v.loginForm.username.$touch();
+        this.$v.loginForm.password.$touch();
         alert("请输入用户名或密码");
       } else {
-        if (
-          this.loginForm.username === "yhch" &&
-          this.loginForm.password === "Aa000000"
-        ) {
-          var see = window.sessionStorage;
-          var d = JSON.stringify(this.loginForm);
-          console.log(d);
-          see.setItem("data", d);
-          this.$router.push({ path: "/baseInfo" });
-        } else {
-          alert("用户名或密码错误");
-        }
+        request.password = this.encrypt(request.password);
+        return this.axios
+          .post("/main/login", JSON.stringify(request))
+          .then(response => {
+            if (response.data && response.data.status === 0) {
+              var see = window.sessionStorage;
+              var d = JSON.stringify(this.loginForm);
+              see.setItem("data", d);
+              this.$router.push({ path: "/baseInfo" });
+              this.user = response.data.data;
+              this.userCode = this.user.user;
+              return response;
+            }
+          });
       }
+    },
+    // RSA加密算法
+    encrypt(plainText) {
+      const key =
+        "-----BEGIN PUBLIC KEY-----\n" +
+        "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhrRPcJHxJaOD9yJyJTNc\n" +
+        "Gxh7crjROOq0TAyvWJqb3eIhoR317lzva/jCn8V9yxg5FoutNnQg7u7e8W+UCJD4\n" +
+        "I8QgGGXVpru6qjAJpVntT5wv3lc6YruBNJI5M8ZbAg7AXd3AzVyhVZ0CujlLMQAf\n" +
+        "H9XPHS05MWB2bFw28hPf5ABKN8Vkv2wrkRnTltnMKEBH58/05gl1x5loKzasfYLt\n" +
+        "3U0UFZKK5X0tb/IXb7KScxgao+o0RwM+Vp8BXrhn7Pi+hKnIRDt/AguU3q8W+rh/\n" +
+        "zorVSa/sKh+CQezIyB4LiDW+JsJfD2chZFw3QleYNUnQPbYI6Hz13x0VngowxQsa\n" +
+        "QwIDAQAB\n" +
+        "-----END PUBLIC KEY-----";
+
+      const rsa = new JSEncrypt();
+      rsa.setPublicKey(key);
+      return rsa.encrypt(plainText);
     }
   }
 };
 </script>
 
 <style lang="less" scoped>
+.error {
+  color: red;
+  input {
+    border: 1px solid red;
+  }
+}
 #login {
   width: 100%;
   height: 100%;
@@ -104,6 +152,7 @@ export default {
   padding: 15px;
   font-size: 36px;
   display: inline-block;
+  text-align: center;
   line-height: 70px;
 }
 

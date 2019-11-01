@@ -13,7 +13,14 @@
 </template>
 
 <script>
+import Header from "../../components/header.component";
+import Aside from "../../components/aside-left";
+
 export default {
+  components: {
+    Header,
+    Aside
+  },
   data() {
     return {
       showBackAddEditPw: false
@@ -28,6 +35,9 @@ export default {
 </script>
 
 <style lang="less">
+.row {
+  margin: 0;
+}
 html,
 body {
   padding: 0;
@@ -50,10 +60,13 @@ body {
 }
 
 .content-main {
-  width: calc(100% - 260px);
-  margin: 0 20px;
+  width: calc(100% - 240px);
+  margin-left: 20px;
+  padding-right: 20px;
   position: absolute;
   left: 220px;
   min-width: 1200px;
+  height: calc(100% - 100px);
+  overflow: auto;
 }
 </style>

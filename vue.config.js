@@ -1,9 +1,10 @@
 module.exports = {
   //axios域代理，解决axios跨域问题
   devServer: {
+    https: true,
     proxy: {
       "/": {
-        target: "http://192.168.17.22:9090",
+        target: "xxxxx.xxx",
         changeOrigin: true,
         ws: true,
         pathRewrite: {

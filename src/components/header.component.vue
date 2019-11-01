@@ -1,5 +1,5 @@
 <template>
-  <div id="header" class="row">
+  <div id="header" class="row input-margin">
     <div class="header-left col-sm-11">welcome</div>
     <div class="header-right col-sm-1">
       <div v-if="user.info">

@@ -13,7 +13,9 @@
       </li>
       <div v-if="showConfigMenu">
         <li v-for="menu in menusConfig" :key="menu.id" class="aside-li">
-          <router-link :to="menu.url" class="router-link">{{ menu.name }}</router-link>
+          <router-link :to="menu.url" class="router-link">
+            {{ menu.name }}
+          </router-link>
         </li>
       </div>
     </ul>
@@ -44,7 +46,9 @@
       </li>
       <div v-if="showTradeMenu">
         <li v-for="menu in menusTrade" :key="menu.id" class="aside-li">
-          <router-link :to="menu.url" class="router-link">{{ menu.name }}</router-link>
+          <router-link :to="menu.url" class="router-link">
+            {{ menu.name }}
+          </router-link>
         </li>
       </div>
     </ul>
@@ -61,7 +65,9 @@
       </li>
       <div v-if="showAuditMenu">
         <li v-for="menu in menusAudit" :key="menu.id" class="aside-li">
-          <router-link :to="menu.url" class="router-link">{{ menu.name }}</router-link>
+          <router-link :to="menu.url" class="router-link">
+            {{ menu.name }}
+          </router-link>
         </li>
       </div>
     </ul>
