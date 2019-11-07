@@ -5,10 +5,13 @@
         <div>
           <form action id="trade-search-form">
             <div class="row">
-              <SelectComponent class="col-sm-3" search-title="交易时间"></SelectComponent>
+              <div class="col-sm-3">
+                <label for="tradeTime" class="col-sm-12">交易时间</label>
+                <dateComponent ref="searchTime" :init-time="time" :picker-options="pickerOptions"></dateComponent>
+              </div>
               <div class="col-sm-3 row">
-                <label for="tradeNum" class="col-sm-12">订单号</label>
-                <input type="text" class="col-sm-12" v-model="condition.tradeNum" />
+                <label for="orderNum" class="col-sm-12">订单号</label>
+                <input type="text" class="col-sm-12" v-model="condition.orderNum" />
               </div>
               <SelectComponent class="col-sm-3" v-if="showConfigMenu" search-title="交易渠道"></SelectComponent>
               <div class="col-sm-3 search">
@@ -19,7 +22,7 @@
                   @click="showConfigMenu = !showConfigMenu"
                 />
                 <span @click="showConfigMenu = !showConfigMenu">高级查询</span>
-                <button class="search-button">
+                <button class="search-button" @click="searchTrade" type="button">
                   <img src="../../assets/search.png" alt />
                   <span>查询</span>
                 </button>
@@ -48,7 +51,7 @@
       </template>
       <template #table>
         <el-table
-          :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+          :data="tableData"
           style="width: 100%"
           class="table-width"
         >
@@ -58,7 +61,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="storeName" label="门店名称"></el-table-column>
-          <el-table-column prop="transTime" label="交易时间"></el-table-column>
+          <el-table-column prop="transTime" :formatter="prettifyDateStr" label="交易时间"></el-table-column>
           <el-table-column prop="tradeScene" label="交易场景"></el-table-column>
           <el-table-column prop="paymentBrand" label="支付品牌"></el-table-column>
           <el-table-column prop="transAmt" label="交易金额"></el-table-column>
@@ -139,36 +142,72 @@
               <el-input v-model="tradeForm.origOrderNum" disabled></el-input>
             </el-form-item>
           </el-form>
-          <!-- <span slot="footer" class="dialog-footer"> -->
-            <tableButton button-name="加盟店退款" style="margin-bottom: 20px;" @click.native="toRefund(tradeForm.orderNum)"></tableButton>
-          <!-- </span> -->
+          <span slot="footer" class="dialog-footer">
+            <tableButton
+              button-name="加盟店退款"
+              style="margin-bottom: 20px;"
+              @click.native="toRefund(tradeForm.orderNum)"
+            ></tableButton>
+          </span>
         </el-dialog>
       </template>
     </ContentMain>
   </div>
 </template>
 <script>
-import tableButton from "../../components/table-button"
+import tableButton from "../../components/table-button";
+import dateComponent from "../../components/date.component";
+import moment from "moment";
 export default {
   name: "about",
   components: {
-    tableButton
+    tableButton,
+    dateComponent
   },
   data() {
     return {
+      time: [],
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: "今天",
+            onClick(picker) {
+              const startTime = moment().format("YYYY-MM-DDT00:00:00+08:00");
+              const endTime = moment().format("YYYY-MM-DDT23:59:59+08:00");
+              picker.$emit("pick", [startTime, endTime]);
+            }
+          },
+          {
+            text: "昨天",
+            onClick(picker) {
+              const end = moment().subtract(1,"days").format("YYYY-MM-DDT23:59:59+08:00");
+              const start = moment().subtract(1,"days").format("YYYY-MM-DDT00:00:00+08:00");
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "本月",
+            onClick(picker) {
+              const end = moment().format("YYYY-MM-DDT23:59:59+08:00");
+              const start = moment().format("YYYY-MM-01T00:00:00+08:00");
+              picker.$emit("pick", [start, end]);
+            }
+          }
+        ]
+      },
       dialogVisible: false,
       currentPage: 1,
       pageSize: 20,
       total: 1,
       condition: {
-        endTime: "2019-10-31T00:00:00+08:00",
+        endTime: "",
         page: 1,
         paymentBrand: "",
         procFlag: "",
-        size: 80,
-        startTime: "2019-10-30T00:00:00+08:00",
+        size: 20,
+        startTime: "",
         transScene: "",
-        utcOffset: 480
+        utcOffset: moment().utcOffset()
       },
       show: true,
       msg: "welcome",
@@ -188,32 +227,41 @@ export default {
       this.dialogVisible = true;
       this.tradeForm = tradeInfo;
     },
-    onFocus() {
-      console.log(this.msg);
-    },
     loadData() {
-      this.query(this.condition);
-    },
-    query(condition) {
-      this.$api.trade
-        .tradeList(condition)
-        .then(resp => {
-          this.tableData = resp.data.data;
-          this.total = resp.data.total;
-          console.log(this.tableData);
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      console.log(moment().subtract(1,"days").format());
+      this.searchTrade();
     },
     handleCurrentChange: function(currentPage) {
       this.currentPage = currentPage;
+      this.condition.page = this.currentPage;
+      this.searchTrade();
     },
     handleClose() {
       this.dialogVisible = false;
     },
     toRefund(orderNum) {
-      this.$router.push({ name: "refund",params:{orderNum:orderNum} });
+      this.$router.push({ name: "refund", params: { orderNum: orderNum } });
+    },
+    prettifyDateStr(row, column) {
+      var newDate = row[column.property];
+      if (newDate === undefined) {
+        return "";
+      }
+      return moment(newDate).format("YYYY-MM-DD HH:mm:ss");
+    },
+    searchTrade() {
+      if (this.condition.startTime !== "") {
+        this.time = this.$refs.searchTime.initTime;
+        this.condition.startTime = this.time[0];
+        this.condition.endTime = this.time[1];
+      } else {
+        this.condition.startTime = moment().format("YYYY-MM-DDT00:00:00+08:00");
+        this.condition.endTime = moment().format("YYYY-MM-DDT23:59:59+08:00");
+      }
+      this.$api.trade.tradeList(this.condition).then(resp => {
+        this.tableData = resp.data.data;
+        this.total = resp.data.total;
+      });
     }
   }
 };
@@ -277,24 +325,36 @@ export default {
 </style>
 <style>
 .el-dialog {
-  height: 750px;
-  overflow: auto;
+  height: 855px;
+  margin-top: 8vh !important;
+  /* overflow: auto; */
 }
 #tradeForm {
   width: 98%;
+  overflow: auto;
+  height: 666px;
+  padding-right: 30px;
 }
-.el-input>.el-input__inner {
+.el-input > .el-input__inner {
   height: 36px;
   line-height: 36px;
 }
-.el-form-item__content>label {
+.el-form-item__content > label {
   line-height: 30px;
 }
 .el-dialog .el-dialog__body {
   padding-bottom: 0;
+  padding-right: 0;
 }
 .el-dialog .el-dialog__footer {
+  width: 100%;
+  height: 85px;
   padding: 0 20px;
-  margin-bottom: 20px;
+  box-shadow: 2px 0 8px 0 #8faeb3;
+}
+
+.el-dialog__header {
+  box-shadow: 2px 0 8px 0 #8faeb3;
+  padding-bottom: 30px !important;
 }
 </style>

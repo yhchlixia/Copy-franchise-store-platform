@@ -212,10 +212,6 @@ export default {
         .then(resp => {
           this.tradeStaticData = resp.data.data;
           this.total = resp.data.total;
-          console.log(this.tradeStaticData);
-        })
-        .catch(err => {
-          console.log(err);
         });
     },
     submit(user) {

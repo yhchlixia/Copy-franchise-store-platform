@@ -136,6 +136,9 @@ export default {
     border: 1px solid red;
   }
 }
+.refund-img {
+  text-align: center;
+}
 .refund-img > img {
   width: 388px;
 }

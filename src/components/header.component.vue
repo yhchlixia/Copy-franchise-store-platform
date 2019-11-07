@@ -1,7 +1,7 @@
 <template>
   <div id="header" class="row input-margin">
-    <div class="header-left col-sm-11">welcome</div>
-    <div class="header-right col-sm-1">
+    <div class="header-left col-sm-10">welcome</div>
+    <div class="header-right col-sm-2">
       <div v-if="user.info">
         <img src="../assets/icon_login .png" alt @click="showBackAddEdit" />
         <span @click="showBackAddEdit">{{ user.username }}</span>
@@ -36,9 +36,9 @@ export default {
         user.info = true;
         return user;
       } else {
-        var user = { username: "", password: "" };
-        user.info = false;
-        return user;
+        var userInfo = { username: "", password: "" };
+        userInfo.info = false;
+        return userInfo;
       }
     }
   },
@@ -87,12 +87,13 @@ export default {
   display: inline-block;
   line-height: 60px;
   position: relative;
+  text-align: center;
 }
 
 .back-edit-password {
   position: absolute;
   top: 50px;
-  left: 10px;
+  left: 100px;
   z-index: 999;
   background-color: #fff;
   box-shadow: 0 8px 17px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
