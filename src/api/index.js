@@ -1,7 +1,9 @@
 import * as trade from "./trade";
+import * as user from "./user";
 
 const apiObj = {
-  trade
+  trade,
+  user
 };
 
 const install = function(Vue) {

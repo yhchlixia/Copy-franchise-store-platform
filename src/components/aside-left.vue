@@ -104,22 +104,22 @@ export default {
         {
           id: 1,
           name: "机构",
-          url: "/config/acquirer/list"
+          url: "/acquirer/list"
         },
         {
           id: 2,
           name: "集团",
-          url: "/config/agent/list"
+          url: "/agent/list"
         },
         {
           id: 3,
           name: "商户",
-          url: "/config/merchant/list"
+          url: "/merchant/list"
         },
         {
           id: 4,
           name: "门店",
-          url: "/config/store/list"
+          url: "/store/list"
         }
       ],
       menusAudit: [

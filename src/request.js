@@ -4,7 +4,7 @@ import qs from "qs";
 
 const accessTokenKey = "access_token";
 const authKey = "Authorization";
-const jwt = "";
+let jwt = "";
 
 axios.defaults.headers.common["X-Platform"] = "everonet";
 

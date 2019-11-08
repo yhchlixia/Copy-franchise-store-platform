@@ -3,7 +3,10 @@
     <ContentMain main-title="机构">
       <template #header>
         <div class="row">
-          <SelectComponent class="col-sm-3" level="acquirer" search-title="加盟店"></SelectComponent>
+          <SelectComponent
+            class="col-sm-3"
+            level="acquirer"
+            search-title="加盟店"></SelectComponent>
         </div>
       </template>
     </ContentMain>

@@ -7,13 +7,22 @@
             <div class="row">
               <div class="col-sm-3">
                 <label for="tradeTime" class="col-sm-12">交易时间</label>
-                <dateComponent ref="searchTime" :init-time="time" :picker-options="pickerOptions"></dateComponent>
+                <dateComponent
+                  ref="searchTime"
+                  :init-time="time"
+                  :picker-options="pickerOptions"></dateComponent>
               </div>
               <div class="col-sm-3 row">
                 <label for="orderNum" class="col-sm-12">订单号</label>
-                <input type="text" class="col-sm-12" v-model="condition.orderNum" />
+                <input
+                  type="text"
+                  class="col-sm-12"
+                  v-model="condition.orderNum" />
               </div>
-              <SelectComponent class="col-sm-3" v-if="showConfigMenu" search-title="交易渠道"></SelectComponent>
+              <SelectComponent
+                class="col-sm-3"
+                v-if="showConfigMenu"
+                search-title="交易渠道"></SelectComponent>
               <div class="col-sm-3 search">
                 <img
                   :src="showConfigMenu ? src1 : src2"
@@ -50,11 +59,7 @@
         </div>
       </template>
       <template #table>
-        <el-table
-          :data="tableData"
-          style="width: 100%"
-          class="table-width"
-        >
+        <el-table :data="tableData" style="width: 100%" class="table-width">
           <el-table-column label="订单号">
             <template slot-scope="scope">
               <a @click="tradeDetails(scope.row)">{{ scope.row.orderNum }}</a>
@@ -180,8 +185,12 @@ export default {
           {
             text: "昨天",
             onClick(picker) {
-              const end = moment().subtract(1,"days").format("YYYY-MM-DDT23:59:59+08:00");
-              const start = moment().subtract(1,"days").format("YYYY-MM-DDT00:00:00+08:00");
+              const end = moment()
+                .subtract(1, "days")
+                .format("YYYY-MM-DDT23:59:59+08:00");
+              const start = moment()
+                .subtract(1, "days")
+                .format("YYYY-MM-DDT00:00:00+08:00");
               picker.$emit("pick", [start, end]);
             }
           },
@@ -228,7 +237,11 @@ export default {
       this.tradeForm = tradeInfo;
     },
     loadData() {
-      console.log(moment().subtract(1,"days").format());
+      console.log(
+        moment()
+          .subtract(1, "days")
+          .format()
+      );
       this.searchTrade();
     },
     handleCurrentChange: function(currentPage) {

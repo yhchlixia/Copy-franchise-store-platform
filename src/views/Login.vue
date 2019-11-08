@@ -68,6 +68,7 @@ export default {
   methods: {
     loadData() {
       window.sessionStorage.removeItem("data");
+      window.sessionStorage.removeItem("access_token");
     },
     submit(request) {
       if (this.loginForm.username === "" || this.loginForm.password === "") {
@@ -76,10 +77,9 @@ export default {
         alert("请输入用户名或密码");
       } else {
         request.password = this.encrypt(request.password);
-        return this.axios
-          .post("/main/login", JSON.stringify(request))
+        this.$api.user.toLogin(request)
           .then(response => {
-            if (response.data && response.data.status === 0) {
+            if (response.data && response.status === 0) {
               var see = window.sessionStorage;
               var d = JSON.stringify(this.loginForm);
               see.setItem("data", d);

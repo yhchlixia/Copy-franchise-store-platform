@@ -35,12 +35,15 @@ export default new Router({
       component: BaseInfo,
       children: [
         {
-          path: "/trade/list",
+          path: "list",
           name: "tradeList",
+          meta: {
+            requireAuth: true // 该路由项需要权限校验
+          },
           component: TradeList
         },
         {
-          path: "/trade/static",
+          path: "static",
           name: "tradeStatic",
           meta: {
             requireAuth: true // 判断是否需要登录
@@ -48,7 +51,7 @@ export default new Router({
           component: TradeStatic
         },
         {
-          path: "/trade/refund",
+          path: "refund",
           name: "refund",
           meta: {
             requireAuth: true // 判断是否需要登录
@@ -63,8 +66,11 @@ export default new Router({
       component: BaseInfo,
       children: [
         {
-          path: "/config/acquirer/list",
+          path: "list",
           name: "acquirerList",
+          meta: {
+            requireAuth: true // 该路由项需要权限校验
+          },
           component: AcquirerList
         }
       ]
@@ -75,8 +81,11 @@ export default new Router({
       component: BaseInfo,
       children: [
         {
-          path: "/config/agent/list",
+          path: "list",
           name: "agentList",
+          meta: {
+            requireAuth: true // 该路由项需要权限校验
+          },
           component: AgentList
         }
       ]
@@ -87,8 +96,11 @@ export default new Router({
       component: BaseInfo,
       children: [
         {
-          path: "/config/merchant/list",
+          path: "list",
           name: "merchantList",
+          meta: {
+            requireAuth: true // 该路由项需要权限校验
+          },
           component: MerchantList
         }
       ]
@@ -99,8 +111,11 @@ export default new Router({
       component: BaseInfo,
       children: [
         {
-          path: "/config/store/list",
+          path: "list",
           name: "storeList",
+          meta: {
+            requireAuth: true // 该路由项需要权限校验
+          },
           component: StoreList
         }
       ]
@@ -111,8 +126,11 @@ export default new Router({
       component: BaseInfo,
       children: [
         {
-          path: "/audit/list",
+          path: "list",
           name: "auditList",
+          meta: {
+            requireAuth: true // 该路由项需要权限校验
+          },
           component: AuditList
         }
       ]
