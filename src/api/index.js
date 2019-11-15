@@ -1,9 +1,11 @@
 import * as trade from "./trade";
 import * as user from "./user";
+import * as componentService from "./component.services";
 
 const apiObj = {
   trade,
-  user
+  user,
+  componentService
 };
 
 const install = function(Vue) {

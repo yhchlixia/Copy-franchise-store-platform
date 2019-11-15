@@ -5,7 +5,7 @@ module.exports = {
     https: true,
     proxy: {
       "/": {
-        target: "http://192.168.17.22:6910",
+        target: "https://tismp.everonet.com",
         changeOrigin: true,
         ws: true,
         pathRewrite: {

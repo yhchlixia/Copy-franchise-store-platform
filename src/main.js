@@ -18,7 +18,7 @@ Vue.prototype.$moment = moment; //赋值使用
 router.beforeEach((to, from, next) => {
   if (to.meta.requireAuth) {
     // 判断该路由是否需要登录权限
-    if (window.sessionStorage.access_token) {
+    if (sessionStorage.access_token) {
       // 获取当前的token是否存在
       console.log("token存在");
       next();

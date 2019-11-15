@@ -7,22 +7,13 @@
             <div class="row">
               <div class="col-sm-3">
                 <label for="tradeTime" class="col-sm-12">交易时间</label>
-                <dateComponent
-                  ref="searchTime"
-                  :init-time="time"
-                  :picker-options="pickerOptions"></dateComponent>
+                <dateComponent id="allWidth" ref="searchTime" :init-time="time" :picker-options="pickerOptions"></dateComponent>
               </div>
               <div class="col-sm-3 row">
                 <label for="orderNum" class="col-sm-12">订单号</label>
-                <input
-                  type="text"
-                  class="col-sm-12"
-                  v-model="condition.orderNum" />
+                <input type="text" class="col-sm-12" v-model="condition.orderNum" />
               </div>
-              <SelectComponent
-                class="col-sm-3"
-                v-if="showConfigMenu"
-                search-title="交易渠道"></SelectComponent>
+              <SelectComponent class="col-sm-3" v-if="showConfigMenu" search-title="交易渠道"></SelectComponent>
               <div class="col-sm-3 search">
                 <img
                   :src="showConfigMenu ? src1 : src2"
@@ -40,13 +31,29 @@
             <div v-if="showConfigMenu" class="height-search">
               <div class="row">
                 <SelectComponent class="col-sm-3" search-title="交易场景"></SelectComponent>
-                <SelectComponent class="col-sm-3" level="status" search-title="状态"></SelectComponent>
-                <SelectComponent class="col-sm-3" level="acquirer" search-title="加盟店"></SelectComponent>
+                <div class="col-sm-3 row">
+                  <label class="col-sm-12">状态</label>
+                  <el-select
+                    v-model="statusOne"
+                    filterable
+                    placeholder="请选择"
+                    class="col-sm-12"
+                    clearable
+                  >
+                    <el-option
+                      v-for="statu in statusList"
+                      :value="statu"
+                      :key="statu.key"
+                      :label="statu.value"
+                    ></el-option>
+                  </el-select>
+                </div>
+                <SelectComponent class="col-sm-3" limit="1000" level="acquirer" search-title="加盟店"></SelectComponent>
               </div>
               <div class="row">
-                <SelectComponent class="col-sm-3" level="agent" search-title="集团"></SelectComponent>
-                <SelectComponent class="col-sm-3" level="merchant" search-title="商户"></SelectComponent>
-                <SelectComponent class="col-sm-3" level="store" search-title="门店"></SelectComponent>
+                <SelectComponent class="col-sm-3" limit="50" level="agent" search-title="集团"></SelectComponent>
+                <SelectComponent class="col-sm-3" limit="50" level="merchant" search-title="商户"></SelectComponent>
+                <SelectComponent class="col-sm-3" limit="50" level="store" search-title="门店"></SelectComponent>
               </div>
               <div class="row">
                 <div class="col-sm-3 row">
@@ -171,6 +178,20 @@ export default {
   },
   data() {
     return {
+      statusOne: "",
+      statusList: [{
+        key: 0,
+        value: "成功"
+      },{
+        key: 2,
+        value: "失败"
+      },{
+        key: 5,
+        value: "处理中"
+      },{
+        key: 9,
+        value: "超时"
+      }],
       time: [],
       pickerOptions: {
         shortcuts: [
@@ -326,6 +347,14 @@ export default {
     .height-search {
       .row {
         margin-top: 12px;
+        .row {
+          padding-left: 0;
+          padding-right: 30px;
+          .col-sm-12 {
+            padding-left: 0;
+            padding-right: 0;
+          }
+        }
       }
     }
   }
@@ -369,5 +398,8 @@ export default {
 .el-dialog__header {
   box-shadow: 2px 0 8px 0 #8faeb3;
   padding-bottom: 30px !important;
+}
+#allWidth {
+  width: 100%;
 }
 </style>
