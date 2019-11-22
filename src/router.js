@@ -10,6 +10,7 @@ import AgentList from "./views/config/agent/agent-list";
 import MerchantList from "./views/config/merchant/merchant-list";
 import StoreList from "./views/config/store/store-list";
 import AuditList from "./views/audit/audit-list";
+import AcquirerAdd from "./views/config/acquirer/acquirer-add";
 
 Vue.use(Router);
 
@@ -72,6 +73,14 @@ export default new Router({
             requireAuth: true // 该路由项需要权限校验
           },
           component: AcquirerList
+        },
+        {
+          path: "add",
+          name: "acquirerAdd",
+          meta: {
+            requireAuth: true // 该路由项需要权限校验
+          },
+          component: AcquirerAdd
         }
       ]
     },

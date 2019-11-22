@@ -1,24 +1,50 @@
 <template>
-  <div class="row">
-    <label class="col-sm-12">{{ searchTitle }}</label>
-    <el-select
-      v-model="value"
-      :change="selectOption(value)"
-      @visible-change="optionWidth"
-      id="select"
-      filterable
-      placeholder="请选择"
-      class="col-sm-12"
-      clearable
-    >
-      <el-option v-for="option in options" :value="option.name" :key="option.code">
-        <label for="option" class="selectLabel">{{ option.name }}</label>
-        <span>{{ option.code }}</span>
-      </el-option>
-    </el-select>
-    <!-- <select v-model="selectOne" class="col-sm-12">
+  <div>
+    <div class="row" v-if="level">
+      <label class="col-sm-12">{{ searchTitle }}</label>
+      <el-select
+        v-model="value"
+        :change="selectOption(value)"
+        @visible-change="optionWidth"
+        id="select"
+        filterable
+        placeholder="请选择"
+        class="col-sm-12"
+        clearable
+      >
+        <el-option v-for="option in options" :value="option.name" :key="option.code">
+          <label for="option" class="selectLabel">{{ option.name }}</label>
+          <span>{{ option.code }}</span>
+        </el-option>
+      </el-select>
+      <!-- <select v-model="selectOne" class="col-sm-12">
       <option v-for="option in options" :value="option.value" :key="option">{{ option }}</option>
-    </select>-->
+      </select>-->
+    </div>
+    <div class="row" v-if="channel">
+      <div class="col-sm-12 channel-label">
+        <input type="checkbox" :name="channel" :id="channel" class="checkbox-style" />
+        <label class="label-style">{{ channel }}</label>
+      </div>
+      <el-select
+        v-model="value"
+        :change="selectOption(value)"
+        @visible-change="optionWidth"
+        id="select"
+        filterable
+        placeholder="请选择"
+        class="col-sm-12"
+        clearable
+      >
+        <el-option v-for="option in options" :value="option.name" :key="option.code">
+          <label for="option" class="selectLabel">{{ option.name }}</label>
+          <span>{{ option.code }}</span>
+        </el-option>
+      </el-select>
+      <!-- <select v-model="selectOne" class="col-sm-12">
+      <option v-for="option in options" :value="option.value" :key="option">{{ option }}</option>
+      </select>-->
+    </div>
   </div>
 </template>
 <script>
@@ -26,7 +52,8 @@ export default {
   props: {
     searchTitle: String,
     level: String,
-    limit: String
+    limit: String,
+    channel: String
   },
   data() {
     return {
@@ -59,7 +86,7 @@ export default {
       this.options.forEach(item => {
         if (item.name === value) {
           this.selected = item;
-          this.$emit("onSelect",this.selected);
+          this.$emit("onSelect", this.selected);
         }
       });
     },
@@ -164,4 +191,23 @@ export default {
 .selectLabel {
   margin-right: 20px;
 }
+
+.channel-label {
+  padding: 0;
+}
+.checkbox-style {
+  appearance: none;
+  height: 14px;
+  width: 14px;
+  margin: 0 30px 0 0;
+  vertical-align: middle;
+  background-color: #fff;
+  border: 1px solid #DCDFE6;
+  border-radius: 3px;
+}
+.label-style {
+  font-weight: normal;
+  font-size: 14px;
+}
+
 </style>

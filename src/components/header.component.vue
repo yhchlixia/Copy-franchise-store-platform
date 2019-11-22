@@ -2,20 +2,32 @@
   <div id="header" class="row input-margin">
     <div class="header-left col-sm-10">welcome</div>
     <div class="header-right col-sm-2">
-      <div v-if="user.info">
-        <img src="../assets/icon_login .png" alt @click="showBackAddEdit" />
-        <span @click="showBackAddEdit">{{ user.username }}</span>
-        <img src="../assets/icon_show.png" alt @click="showBackAddEdit" />
+      <div v-if="user.info" class="header-local" @click="showSystem()">
+        <img src="../assets/icon_login .png" alt />
+        <span>{{ user.username }}</span>
+        <img src="../assets/icon_show.png" alt  />
       </div>
-      <div v-if="showBackAddEditPw" class="back-edit-password">
+      <div v-if="showBackAddEditPw" @mouseleave="hidden()" class="back-edit-password">
         <ul>
+          <li @click="editPassword">
+            <img src="../assets/icon_login .png" alt />
+            <span>修改密码</span>
+          </li>
           <li @click="backLogin">
             <img src="../assets/icon_login .png" alt />
             <span>退出登录</span>
           </li>
-          <li @click="editPassword">
-            <img src="../assets/icon_login .png" alt />
-            <span>修改密码</span>
+        </ul>
+      </div>
+      <div class="header-local" @click="showLanguage">
+        <img src="../assets/i18n.png" width="14px" alt />
+        <span>{{ language.language }}</span>
+        <img src="../assets/icon_show.png" alt />
+      </div>
+      <div v-if="languageI18n" class="language-i18n-change" @mouseleave="hidden()">
+        <ul>
+          <li v-for="language in languages" :key="language.language" @click="changeLanguage(language)">
+            <span>{{ language.language }}</span>
           </li>
         </ul>
       </div>
@@ -26,7 +38,16 @@
 export default {
   data() {
     return {
-      showBackAddEditPw: false
+      showBackAddEditPw: false,
+      languageI18n: false,
+      language: {},
+      languages: [{
+        language: "中文",
+        json: "zh"
+      },{
+        language: "English",
+        json: "en"
+      }]
     };
   },
   computed: {
@@ -42,17 +63,30 @@ export default {
       }
     }
   },
-  created() {},
+  created() {
+    this.loadData();
+  },
   methods: {
+    loadData() {
+      this.language = this.$store.state.language;
+    },
+    hidden() {
+      this.showBackAddEditPw = false;
+      this.languageI18n = false;
+    },
+    showLanguage() {
+      this.languageI18n = true;
+    },
+    changeLanguage(language) {
+      this.language = language;
+      this.$i18n.locale = this.language.json;
+      this.$store.commit("getLanguage", this.language);
+    },
     hiddenmenu() {
       this.showBackAddEditPw = false;
     },
-    showBackAddEdit() {
-      if (!this.showBackAddEditPw) {
-        this.showBackAddEditPw = true;
-      } else {
-        this.showBackAddEditPw = false;
-      }
+    showSystem() {
+      this.showBackAddEditPw = true;
     },
     backLogin() {
       this.$router.push({ path: "/login" });
@@ -63,7 +97,7 @@ export default {
   }
 };
 </script>
-<style>
+<style scoped>
 #header {
   height: 60px;
   width: 100%;
@@ -77,6 +111,10 @@ export default {
   z-index: 998;
 }
 
+.header-local {
+  display: inline-block;
+}
+
 #header .header-user-info {
   width: 70px;
   height: 18px;
@@ -87,32 +125,46 @@ export default {
   display: inline-block;
   line-height: 60px;
   position: relative;
-  text-align: center;
+  text-align: right;
 }
 
 .back-edit-password {
   position: absolute;
   top: 50px;
-  left: 100px;
+  left: 80px;
   z-index: 999;
   background-color: #fff;
   box-shadow: 0 8px 17px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
   border: none;
   border-radius: 2px;
+  text-align: left;
 }
 
-#header .back-edit-password > ul {
+.language-i18n-change {
+  position: absolute;
+  top: 50px;
+  left: 170px;
+  z-index: 999;
+  background-color: #fff;
+  box-shadow: 0 8px 17px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+  border: none;
+  border-radius: 2px;
+  text-align: left;
+}
+
+ul {
   margin-bottom: 0;
   height: 62px;
 }
 
-#header .back-edit-password > ul > li {
+ul > li {
   height: 26px;
-  width: 160px;
+  width: 140px;
   font-size: 14px;
   color: #333333;
-  padding: 3px 20px;
+  padding: 3px 10px;
   line-height: 26px;
+  cursor: pointer;
 }
 
 #header .header-right img {

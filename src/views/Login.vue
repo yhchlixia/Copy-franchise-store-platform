@@ -5,23 +5,36 @@
     </div>-->
     <div class="col-sm-12">
       <form action id="loginForm">
-        <div class="login-form-title">{{ msg.title }}</div>
+        <div class="login-form-title">{{ $t("common.welcome") }}</div>
         <div class="row login-label-input" :class="{'error': $v.loginForm.username.$error}">
-          <label for="username" name="username" class="col-sm-12 login-label">用户名</label>
-          <input type="text" class="login-input" placeholder="请输入用户名" v-model="loginForm.username" />
+          <label
+            for="username"
+            name="username"
+            class="col-sm-12 login-label"
+          >{{ $t("common.username") }}</label>
+          <input
+            type="text"
+            class="login-input"
+            :placeholder="$t('common.PLEASE_INPUT_USERNAME')"
+            v-model="loginForm.username"
+          />
         </div>
         <div class="row login-label-input" :class="{'error': $v.loginForm.password.$error}">
-          <label for="password" name="password" class="col-sm-12 login-label">密码</label>
+          <label
+            for="password"
+            name="password"
+            class="col-sm-12 login-label"
+          >{{ $t("common.password") }}</label>
           <input
             type="password"
             class="login-input"
-            placeholder="请输入密码"
+            :placeholder="$t('common.PLEASE_INPUT_PASSWORD')"
             v-model.trim="loginForm.password"
             @keyup.enter="submit(loginForm)"
           />
         </div>
         <div class="login-submit">
-          <button type="button" @click="submit(loginForm)">登录</button>
+          <button type="button" @click="submit(loginForm)">{{ $t("common.login") }}</button>
         </div>
       </form>
     </div>
@@ -77,18 +90,36 @@ export default {
         alert("请输入用户名或密码");
       } else {
         request.password = this.encrypt(request.password);
-        this.$api.user.toLogin(request)
-          .then(response => {
-            if (response.data && response.status === 0) {
-              var see = window.sessionStorage;
-              var d = JSON.stringify(this.loginForm);
-              see.setItem("data", d);
-              this.$router.push({ path: "/baseInfo" });
-              this.user = response.data.data;
-              this.userCode = this.user.user;
-              return response;
+        this.$api.user.toLogin(request).then(response => {
+          if (response.data && response.status === 0) {
+            var see = window.sessionStorage;
+            var d = JSON.stringify(this.loginForm);
+            see.setItem("data", d);
+            this.$router.push({ path: "/baseInfo" });
+            this.user = response.data.user;
+            this.$store.commit("getUserInfo", this.user);
+            return response;
+          } else {
+            switch (response.status) {
+              case 400:
+                this.$message({
+                  message: this.$t("message.username_password_error"),
+                  type: "error",
+                  center: true,
+                  customClass: "location-message"
+                });
+                break;
+              default:
+                this.$message({
+                  message: this.$t("message.system_error"),
+                  type: "error",
+                  center: true,
+                  customClass: "location-message"
+                });
+                break;
             }
-          });
+          }
+        });
       }
     },
     // RSA加密算法
@@ -111,6 +142,12 @@ export default {
   }
 };
 </script>
+
+<style lang="less">
+.location-message.el-message {
+  left: 89%;
+}
+</style>
 
 <style lang="less" scoped>
 .error {

@@ -38,7 +38,9 @@ service.interceptors.response.use(
     }
     return response.data;
   },
-  error => Promise.reject(error)
+  errer => {
+    return errer.response;
+  }
 );
 
 export default service;

@@ -1,11 +1,13 @@
 import * as trade from "./trade";
 import * as user from "./user";
+import * as acquirer from "./acquirer";
 import * as componentService from "./component.services";
 
 const apiObj = {
   trade,
   user,
-  componentService
+  componentService,
+  acquirer
 };
 
 const install = function(Vue) {

@@ -1,16 +1,40 @@
 <template>
-  <div id="content-main-list">
-    <div class="content-main-list-header">
-      <h4>{{ mainTitle }}</h4>
-      <div v-if="!noSelect">
-        <hr />
-        <div class="content-main-select">
-          <slot name="header"></slot>
+  <div>
+    <div id="content-main-list" v-if="mainTitle">
+      <div class="content-main-list-header">
+        <h4>{{ mainTitle }}</h4>
+        <div v-if="!noSelect">
+          <hr />
+          <div class="content-main-select">
+            <slot name="header"></slot>
+          </div>
         </div>
       </div>
+      <div class="content-main-list-table">
+        <slot name="table"></slot>
+      </div>
     </div>
-    <div class="content-main-list-table">
-      <slot name="table"></slot>
+    <div id="content-main-list" v-if="page">
+      <div class="content-main-list-header">
+        <div class="content-main-select">
+          <el-breadcrumb separator-class="el-icon-arrow-right">
+            <el-breadcrumb-item
+              v-for="title in titles"
+              :key="title.title"
+              :to="{ path: title.path }"
+            >{{ title.title }}</el-breadcrumb-item>
+          </el-breadcrumb>
+          <div @click="back()" class="back-button">
+            <img width="14px" src="../assets/back.png" alt />
+          </div>
+        </div>
+      </div>
+      <div class="content-main-list-table">
+        <slot name="baseInfo"></slot>
+      </div>
+      <div class="content-main-list-table">
+        <slot name="menuInfo"></slot>
+      </div>
     </div>
   </div>
 </template>
@@ -18,7 +42,9 @@
 export default {
   props: {
     mainTitle: String,
-    noSelect: Boolean
+    noSelect: Boolean,
+    page: String,
+    titles: Array
   },
   data() {
     return {
@@ -27,12 +53,13 @@ export default {
       options: []
     };
   },
-  created() {
-    
-  },
+  created() {},
   methods: {
     onFocus() {
       console.log(this.msg);
+    },
+    back() {
+      this.$router.go(-1);
     }
   }
 };
@@ -79,5 +106,14 @@ export default {
   background-color: #fff;
   border-radius: 5px;
   padding: 20px;
+  margin-bottom: 20px;
+}
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  right: 40px;
+  height: 14px;
+  line-height: 14px;
 }
 </style>

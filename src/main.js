@@ -9,6 +9,9 @@ import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 import api from "./api";
 import moment from "moment";
+// 引入i18n国际化插件
+import VueI18n from "vue-i18n";
+Vue.use(VueI18n);
 
 axios.defaults.baseURL = "./";
 Vue.prototype.axios = axios;
@@ -35,6 +38,15 @@ router.beforeEach((to, from, next) => {
   }
 });
 
+// 注册i18n实例并引入语言文件，文件格式等下解析
+const i18n = new VueI18n({
+  locale: "zh",
+  messages: {
+    zh: require("./assets/languages/zh.json"),
+    en: require("./assets/languages/en.json")
+  }
+});
+
 moment.locale("zh-cn"); //需要汉化
 
 Vue.config.productionTip = false;
@@ -46,5 +58,6 @@ Vue.use(api);
 new Vue({
   router,
   store,
+  i18n,
   render: h => h(App)
 }).$mount("#app");
